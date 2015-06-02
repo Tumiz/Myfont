@@ -1,0 +1,10 @@
+<resources>
+
+    <string name="app_name">Myfont</string>
+
+    <string name="title_activity_main">我的字</string>
+    <string name="clear">清除</string>
+    <string name="save">保存</string>
+    <string name="exit">退出</string>
+
+</resources>

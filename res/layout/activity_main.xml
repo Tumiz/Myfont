@@ -1,0 +1,54 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:background="@drawable/mmtitle_bg"
+        android:gravity="center_vertical"
+        android:paddingLeft="5dip"
+        android:paddingRight="5dip" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:padding="5dip"
+            android:text="@string/title_activity_main"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/white" />
+
+        <ImageView
+            android:id="@+id/iv_btn_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/btnbg"
+            android:contentDescription="@string/save"
+            android:padding="5dip"
+            android:src="@drawable/save" />
+
+        <ImageView
+            android:id="@+id/iv_btn_clear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="28dp"
+            android:layout_toLeftOf="@+id/iv_btn_save"
+            android:background="@drawable/btnbg"
+            android:contentDescription="@string/clear"
+            android:padding="5dip"
+            android:src="@drawable/clear" />
+    </RelativeLayout>
+
+    <m.font.MainView
+        android:id="@+id/mainView1"
+        android:layout_width="300dp"
+        android:layout_height="300dp" 
+        android:layout_gravity="center"
+        android:layout_marginTop="60dp"/>
+
+</LinearLayout>
