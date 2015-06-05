@@ -21,7 +21,6 @@ public class MainView extends View {
 
 	public MainView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-
 		paint = new Paint();
 		paint.setAntiAlias(true); // 抗锯齿
 		paint.setStrokeWidth(10); // 线条宽度
@@ -32,9 +31,9 @@ public class MainView extends View {
 
 		path = new Path();
 		// 创建一张屏幕大小的位图，作为缓冲
-		cachebBitmap = Bitmap.createBitmap(500,500, Config.ARGB_8888);
-		cacheCanvas = new Canvas(cachebBitmap);
-		cacheCanvas.drawColor(Color.WHITE);
+			cachebBitmap = Bitmap.createBitmap(500,500, Config.ARGB_8888);
+			cacheCanvas = new Canvas(cachebBitmap);
+			cacheCanvas.drawColor(Color.WHITE);
 	}
 
 	public MainView(Context context) {

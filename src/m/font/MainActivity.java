@@ -4,58 +4,38 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Toast;
 
-public class MainActivity extends Activity implements OnClickListener {
-	private MainView view;
+public class MainActivity extends Activity{
+	private MainView mv;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.activity_main);
-
-		view = (MainView) findViewById(R.id.mainView1);
-		findViewById(R.id.iv_btn_save).setOnClickListener(this);
-		findViewById(R.id.iv_btn_clear).setOnClickListener(this);
+		mv=(MainView) findViewById(R.id.mainView);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.activity_main, menu);
+		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-
-	@Override
-	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.mi_exit :
-			finish();
-			System.exit(0);
-			break;
+	
+	public void clear(View v){
+		mv.clear();
+	}
+	
+	public void save(View v){
+		String sdState = Environment.getExternalStorageState(); // åˆ¤æ–­sdå¡æ˜¯å¦å­˜åœ¨
+		// æ£€æŸ¥SDå¡æ˜¯å¦å¯ç”¨
+		if (!sdState.equals(android.os.Environment.MEDIA_MOUNTED)) {
+			Toast.makeText(this, "SDå¡æœªå‡†å¤‡å¥½ï¼", Toast.LENGTH_SHORT).show();}
+		else{
+			Toast.makeText(this, "ä¿å­˜æˆåŠŸï¼\næ–‡ä»¶ä¿å­˜åœ¨ï¼š" + Bmp.save(mv.getBitmap()), Toast.LENGTH_LONG).show();		
 		}
-		return super.onMenuItemSelected(featureId, item);
+		mv.clear();
 	}
 
-	@Override
-	public void onClick(View v) {
-		// TODO Auto-generated method stub
-		switch (v.getId()) {
-		case R.id.iv_btn_clear :
-			view.clear();
-			break;
-		case R.id.iv_btn_save : {
-			String sdState = Environment.getExternalStorageState(); // ÅĞ¶Ïsd¿¨ÊÇ·ñ´æÔÚ
-			// ¼ì²éSD¿¨ÊÇ·ñ¿ÉÓÃ
-			if (!sdState.equals(android.os.Environment.MEDIA_MOUNTED)) {
-				Toast.makeText(this, "SD¿¨Î´×¼±¸ºÃ£¡", Toast.LENGTH_SHORT).show();
-				break;
-			}
-			Toast.makeText(this, "±£´æ³É¹¦£¡\nÎÄ¼ş±£´æÔÚ£º" + Bmp.save(view.getBitmap()), Toast.LENGTH_LONG).show();
-		}
-		}
-	}
 }
