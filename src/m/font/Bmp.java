@@ -11,12 +11,29 @@ import android.graphics.Bitmap;
 import android.os.Environment;
 
 public class Bmp {
-    public static String dir = "Text2Img";
-    public static String ACCESS_ERROR = "access_error";
-    public static String FILE_ERROR = "file_error";
-    public static String SAVE_ERROR = "save_error";
+    byte[] buffer;
 
-    public static String save(Bitmap bm) {
+    public Bmp(Bitmap bm){
+    	int w = bm.getWidth();
+        int h = bm.getHeight();
+        int[] pixels = new int[w * h];
+        bm.getPixels(pixels, 0, w, 0, 0, w, h);
+
+        byte[] rgb = addBMP_RGB_888(pixels, w, h);
+        byte[] header = addBMPImageHeader(rgb.length);
+        byte[] infos = addBMPImageInfosHeader(w, h);
+
+        buffer = new byte[54 + rgb.length];
+        System.arraycopy(header, 0, buffer, 0, header.length);
+        System.arraycopy(infos, 0, buffer, 14, infos.length);
+        System.arraycopy(rgb, 0, buffer, 54, rgb.length);
+    }
+    
+    public String save() {
+    	String dir ="自字体";
+    	String ACCESS_ERROR = "access_error";
+        String FILE_ERROR = "file_error";
+        String SAVE_ERROR = "save_error";
         String fileName = new SimpleDateFormat("yyyyMMddhhmmss").format(new Date()) + ".bmp";
         if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             return ACCESS_ERROR;
@@ -30,40 +47,21 @@ public class Bmp {
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return FILE_ERROR;
-        }
-
-
-        int w = bm.getWidth();
-        int h = bm.getHeight();
-        int[] pixels = new int[w * h];
-        bm.getPixels(pixels, 0, w, 0, 0, w, h);
-
-        byte[] rgb = addBMP_RGB_888(pixels, w, h);
-        byte[] header = addBMPImageHeader(rgb.length);
-        byte[] infos = addBMPImageInfosHeader(w, h);
-
-
-        byte[] buffer = new byte[54 + rgb.length];
-        System.arraycopy(header, 0, buffer, 0, header.length);
-        System.arraycopy(infos, 0, buffer, 14, infos.length);
-        System.arraycopy(rgb, 0, buffer, 54, rgb.length);
-        try {
             out.write(buffer);
             out.flush();
             out.close();
-            
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
-            return SAVE_ERROR;
-        }
+            return FILE_ERROR;
+        } catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return SAVE_ERROR;
+		}
         return file.getPath();
     }
 
-    private static byte[] addBMP_RGB_888(int[] b, int w, int h) {
+    private byte[] addBMP_RGB_888(int[] b, int w, int h) {
         int len = b.length;
         System.out.println(b.length);
         byte[] buffer = new byte[w * h * 4];
@@ -82,7 +80,7 @@ public class Bmp {
     }
 
     //BMP文件信息头
-    private static byte[] addBMPImageInfosHeader(int w, int h) {
+    private byte[] addBMPImageInfosHeader(int w, int h) {
         byte[] buffer = new byte[40];
         //这个是固定的 BMP 信息头要40个字节
         buffer[0] = 0x28;
@@ -141,7 +139,7 @@ public class Bmp {
     }
 
     //BMP文件头
-    private static byte[] addBMPImageHeader(int size) {
+    private byte[] addBMPImageHeader(int size) {
         byte[] buffer = new byte[14];
         //magic number 'BM'
         buffer[0] = 0x42;
