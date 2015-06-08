@@ -7,9 +7,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.CornerPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Bitmap.Config;
+import android.media.effect.Effect;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.DisplayMetrics;
@@ -57,7 +59,7 @@ public class MainActivity extends Activity{
 		}
 		paper.clear();
 	}
-	
+
 	public class Paper extends View {
 		private Paint paint;
 		private Canvas cacheCanvas;
@@ -68,14 +70,14 @@ public class MainActivity extends Activity{
 			super(context);
 			paint = new Paint();
 			paint.setAntiAlias(true); // 抗锯齿
-			paint.setStrokeWidth(20); // 线条宽度
+			paint.setPathEffect(new CornerPathEffect(10));
 			paint.setStyle(Paint.Style.STROKE); // 画轮廓
 			paint.setStrokeCap(Paint.Cap.ROUND);//倒圆角
 			paint.setStrokeJoin(Paint.Join.ROUND);//拐角倒圆
 			paint.setColor(Color.BLACK); // 颜色
 			path = new Path();
 			// 创建一张边长为屏幕宽度的位图，作为缓冲
-			
+
 			cacheBitmap = Bitmap.createBitmap(scrwidth,scrwidth, Config.ARGB_8888);
 			cacheCanvas = new Canvas(cacheBitmap);
 			cacheCanvas.drawColor(Color.WHITE);
@@ -106,7 +108,7 @@ public class MainActivity extends Activity{
 		 */
 		public Bitmap getBitmap() {
 			return Bitmap.createScaledBitmap(cacheBitmap, 256, 256, true);
-/*			return cacheBitmap;*/
+			/*			return cacheBitmap;*/
 		}
 
 		private float cur_x, cur_y;
@@ -129,19 +131,17 @@ public class MainActivity extends Activity{
 			case MotionEvent.ACTION_MOVE : {
 				if (!isMoving)
 					break;
-
-				// 二次曲线方式绘制
-				path.quadTo(cur_x, cur_y, x, y);
-				// 下面这个方法貌似跟上面一样
-				// path.lineTo(x, y);
+				/*// 二次曲线方式绘制
+				path.quadTo(cur_x, cur_y, x, y);*/
+				path.lineTo(x, y);
+				paint.setStrokeWidth(event.getPressure()*50); // 线条宽度				
+				cacheCanvas.drawPath(path, paint);
 				cur_x = x;
-				cur_y = y;
+				cur_y = y;			
 				break;
 			}
 
 			case MotionEvent.ACTION_UP : {
-				// 鼠标弹起保存最后状态
-				cacheCanvas.drawPath(path, paint);
 				path.reset();
 				isMoving = false;
 				break;
