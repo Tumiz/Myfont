@@ -11,7 +11,6 @@ import android.graphics.CornerPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Bitmap.Config;
-import android.media.effect.Effect;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.DisplayMetrics;
@@ -65,6 +64,7 @@ public class MainActivity extends Activity{
 		private Canvas cacheCanvas;
 		private Bitmap cacheBitmap;
 		private Path path;
+		float prx = 0,pry = 0;
 
 		public Paper(Context context) {
 			super(context);
@@ -77,7 +77,6 @@ public class MainActivity extends Activity{
 			paint.setColor(Color.BLACK); // 颜色
 			path = new Path();
 			// 创建一张边长为屏幕宽度的位图，作为缓冲
-
 			cacheBitmap = Bitmap.createBitmap(scrwidth,scrwidth, Config.ARGB_8888);
 			cacheCanvas = new Canvas(cacheBitmap);
 			cacheCanvas.drawColor(Color.WHITE);
@@ -85,11 +84,7 @@ public class MainActivity extends Activity{
 
 		@Override
 		protected void onDraw(Canvas canvas) {
-
-			canvas.drawColor(Color.WHITE);  
-			// 绘制上一次的，否则不连贯
-			canvas.drawBitmap(cacheBitmap, 0, 0, null);
-			canvas.drawPath(path, paint);		
+			canvas.drawBitmap(cacheBitmap, 0, 0, null);	
 		}
 
 		/**
@@ -111,49 +106,37 @@ public class MainActivity extends Activity{
 			/*			return cacheBitmap;*/
 		}
 
-		private float cur_x, cur_y;
-		private boolean isMoving;
 		@Override
 		public boolean onTouchEvent(MotionEvent event) {
 			// TODO Auto-generated method stub
 			float x = event.getX();
 			float y = event.getY();
+			float cx,cy;
 
 			switch (event.getAction()) {
-			case MotionEvent.ACTION_DOWN : {
-				cur_x = x;
-				cur_y = y;
-				path.moveTo(cur_x, cur_y);
-				isMoving = true;
+			case MotionEvent.ACTION_DOWN : 
+				path.moveTo(x, y);
+				prx=x;
+				pry=y;
 				break;
-			}
-
-			case MotionEvent.ACTION_MOVE : {
-				if (!isMoving)
-					break;
-				/*// 二次曲线方式绘制
-				path.quadTo(cur_x, cur_y, x, y);*/
-				path.lineTo(x, y);
+			case MotionEvent.ACTION_MOVE :
+				cx=(prx+x)/2;
+				cy=(pry+y)/2;
+				path.quadTo(cx,cy,x, y);
 				paint.setStrokeWidth(event.getPressure()*50); // 线条宽度				
 				cacheCanvas.drawPath(path, paint);
-				cur_x = x;
-				cur_y = y;			
-				break;
-			}
-
-			case MotionEvent.ACTION_UP : {
 				path.reset();
-				isMoving = false;
+				path.moveTo(x, y);
+				prx=x;
+				pry=y;
+				break;
+			case MotionEvent.ACTION_UP : 
+				path.reset();
 				break;
 			}
-			}
-
 			// 通知刷新界面
 			invalidate();
-
 			return true;
 		}
-
 	}
-
 }
